@@ -1,4 +1,5 @@
 import pandas as pd
+import openpyxl
 import geopy as gp
 from geopy.geocoders import Nominatim
 from tqdm import tqdm 
@@ -20,7 +21,7 @@ tqdm.pandas()
 location_data_df['LOCATION'] = location_data_df.progress_apply(retrieving_location, axis=1)
 
 # creating a new csv file with updated location data
-location_data_df.to_csv('new dataframe1', index=False)
+location_data_df.to_excel('new dataframe1.xlsx', index=False)
 print(location_data_df)
 
 

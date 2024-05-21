@@ -1,4 +1,5 @@
 import ephem
+import openpyxl
 import pandas as pd
 import math
 from datetime import datetime
@@ -87,6 +88,6 @@ for index, row in coordinates.iterrows():
     
 # add to data frame
 coordinates['MAX_OBSCURATION'] = max_obscuration_data
-coordinates.to_csv('new dataframe2', index=False)
+coordinates.to_excel('new dataframe2.xlsx', index=False)
 print(coordinates)
 

@@ -1,4 +1,5 @@
 import ephem
+import openpyxl
 import pandas as pd
 import math
 from datetime import datetime
@@ -59,6 +60,6 @@ for index, row in coordinates.iterrows():
 coordinates['OBSCURATION'] = obscuration_data
 
 # creating a new file with new obscuration data
-coordinates.to_csv('new dataframe', index=False)
+coordinates.to_excel('new dataframe.xlsx', index=False)
 print(coordinates)
 
