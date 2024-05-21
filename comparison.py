@@ -64,6 +64,7 @@ high_obscuration_1 = [87 < obscuration_1 <= 95.0]
 low_obscuration_2 = [70]
 high_obscuration_2 = [60 < obscuration_2 <= 75]
 
+# plotting the bar graph 
 plt.bar(low_obscuration_1, high_obscuration_1, label='Obscuration 12 hrs into 4/8', color='r')
 plt.bar(low_obscuration_2, high_obscuration_2, label='Obscuration 4 hrs into 4/8', color='c')
 
