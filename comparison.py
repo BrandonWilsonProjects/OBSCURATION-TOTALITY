@@ -3,7 +3,7 @@ import pandas as pd
 import math
 from datetime import datetime
 from datetime import time
-
+import matplotlib.pyplot as plt
 
 def obscuration_algorithm(latitude, longitude, date, time_str):
     observer = ephem.Observer()
@@ -39,26 +39,38 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
         obscuration = intersection_area / (math.pi * r1 ** 2)
 
     return obscuration * 100  # convert to percentage
-    
-# file w/ updated cleaned latitude and longitude values
-coordinates = pd.read_csv(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\clean dataset - 4_8_24 total solar eclipse.csv')
 
-# full solar eclipse date/time
-eclipse_date = "2024-04-08"
-eclipse_time = "4:00:00"
+coordinates = pd.read_csv(r"C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\clean dataset - 4_8_24 total solar eclipse.csv")
+
+# eclipse date/time for first comparison dataset
+eclipse_date_1 = "2024-04-08"
+eclipse_time_1 = "12:00:00"
+eclipse_time_2 = "4:00:00"
 
 # creating an empty list, iterating through each latitude and longitude point in the dataframe, calculating obscuration for each row, appending these values to the created list...
-obscuration_data = []
+obscuration_data_1 = []
+obscuration_data_2 = []
 for index, row in coordinates.iterrows():
     latitude = row['LATITUDE']
     longitude = row['LONGITUDE']
-    obscuration = obscuration_algorithm(latitude, longitude, eclipse_date, eclipse_time)
-    obscuration_data.append(obscuration)
-    
-# adding the new values from algorithm to the empty list
-coordinates['OBSCURATION'] = obscuration_data
+    obscuration_1 = obscuration_algorithm(latitude, longitude, eclipse_date_1, eclipse_time_1)
+    obscuration_data_1.append(obscuration_1)
+    obscuration_2 = obscuration_algorithm(latitude, longitude, eclipse_date_1, eclipse_time_2)
 
-# creating a new file with new obscuration data
-coordinates.to_csv('new dataframe', index=False)
-print(coordinates)
+# seting values to graph in the bar chart
+low_obscuration_1 = [95]
+high_obscuration_1 = [87 < obscuration_1 <= 95.0]
+
+low_obscuration_2 = [70]
+high_obscuration_2 = [60 < obscuration_2 <= 75]
+
+plt.bar(low_obscuration_1, high_obscuration_1, label='Obscuration 12 hrs into 4/8', color='r')
+plt.bar(low_obscuration_2, high_obscuration_2, label='Obscuration 4 hrs into 4/8', color='c')
+
+plt.xlabel('obscuration percentage')
+plt.ylabel('quantity of respectively categorized obscuration values')
+plt.title('Obscuration Comparison Graph')
+plt.legend()
+plt.show()
+
 
