@@ -45,7 +45,7 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
 # file w/ updated cleaned latitude and longitude values
 coordinates = pd.read_csv(r'CSV FILE')
 
-# full solar eclipse date/time
+# full solar eclipse date/time (can change if needed...)
 eclipse_date = "2024-04-08"
 eclipse_time = "8:00:00"
 

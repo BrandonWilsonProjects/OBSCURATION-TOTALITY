@@ -58,14 +58,14 @@ for index, row in coordinates.iterrows():
     obscuration_data_1.append(obscuration_1)
     obscuration_2 = obscuration_algorithm(latitude, longitude, eclipse_date_1, eclipse_time_2)
 
-# seting values to graph in the bar chart
+# seting values to graph in the bar chart (can change if needed...)
 low_obscuration_1 = [95]
 high_obscuration_1 = [87 < obscuration_1 <= 95.0]
 
 low_obscuration_2 = [70]
 high_obscuration_2 = [60 < obscuration_2 <= 75]
 
-# plotting the bar graph 
+# plotting the bar graph (can change if needed...)
 plt.bar(low_obscuration_1, high_obscuration_1, label='Obscuration 12 hrs into 4/8', color='r')
 plt.bar(low_obscuration_2, high_obscuration_2, label='Obscuration 4 hrs into 4/8', color='c')
 
