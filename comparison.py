@@ -1,3 +1,4 @@
+# This file allows for two obscuration totality datasets, calculated at two different times of the day, to be compared.
 import ephem
 import pandas as pd
 import math
@@ -40,7 +41,7 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
 
     return obscuration * 100  # convert to percentage
 
-coordinates = pd.read_csv(r"C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\clean dataset - 4_8_24 total solar eclipse.csv")
+coordinates = pd.read_csv(r"CSV FILE")
 
 # eclipse date/time for first comparison dataset
 eclipse_date_1 = "2024-04-08"
