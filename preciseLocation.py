@@ -1,3 +1,4 @@
+# This file identifies the proximal location of coordinate points in a csv file. 
 import pandas as pd
 import openpyxl
 import geopy as gp
@@ -5,7 +6,7 @@ from geopy.geocoders import Nominatim
 from tqdm import tqdm 
 
 # loading the cleaned latitude and longitude data and convering it to a data frame 
-location_data = pd.read_csv(r"C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\clean dataset - 4_8_24 total solar eclipse.csv")
+location_data = pd.read_csv(r"CSV FILE")
 location_data_df = pd.DataFrame(location_data)
 
 # activating nominatim class...
