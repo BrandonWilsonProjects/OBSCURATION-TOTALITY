@@ -15,22 +15,21 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
     sun = ephem.Sun(observer)
     moon = ephem.Moon(observer)
 
-    # Calculate the angular size of the Sun and the Moon in radians
+    # calculating angular radius for both the sun and the moon
     sun_angular_radius = sun.size / (2 * 60) * (math.pi / 180)
     moon_angular_radius = moon.size / (2 * 60) * (math.pi / 180)
 
-    # Calculate the angular distance between the centers of the Sun and Moon
+    # finding the angular distance between the center of the sun and the moon
     sun_moon_distance = ephem.separation((sun.az, sun.alt), (moon.az, moon.alt))
 
-    # Calculate the obscuration using the formula for the overlapping area of two circles
+    # calculating the obscuration considering potential overlap of both astronomical objects
     if sun_moon_distance >= sun_angular_radius + moon_angular_radius:
-        # No overlap
         obscuration = 0.0
     elif sun_moon_distance <= abs(sun_angular_radius - moon_angular_radius):
-        # Total obscuration (one circle is completely inside the other)
+        # complete totality
         obscuration = (moon_angular_radius ** 2 / sun_angular_radius ** 2) if moon_angular_radius < sun_angular_radius else 1.0
     else:
-        # Partial overlap
+        # partial overlap
         r1, r2, d = sun_angular_radius, moon_angular_radius, sun_moon_distance
         part1 = r1**2 * math.acos((d**2 + r1**2 - r2**2) / (2 * d * r1))
         part2 = r2**2 * math.acos((d**2 + r2**2 - r1**2) / (2 * d * r2))
@@ -38,16 +37,16 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
         intersection_area = part1 + part2 - part3
         obscuration = intersection_area / (math.pi * r1 ** 2)
 
-    return obscuration * 100  # Convert to percentage
+    return obscuration * 100  # convert to percentage
     
-# Load data
+# file w/ updated cleaned latitude and longitude values
 coordinates = pd.read_csv(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\clean dataset - 4_8_24 total solar eclipse.csv')
 
-# Date of Eclipse
-eclipse_date = "2024-04-24"
+# full solar eclipse date/time
+eclipse_date = "2024-04-08"
 eclipse_time = "12:00:00"
 
-# Calculating obscuration for each datapoint
+# creating an empty list, iterating through each latitude and longitude point in the dataframe, calculating obscuration for each row, appending these values to the created list...
 obscuration_data = []
 for index, row in coordinates.iterrows():
     latitude = row['LATITUDE']
@@ -55,10 +54,10 @@ for index, row in coordinates.iterrows():
     obscuration = obscuration_algorithm(latitude, longitude, eclipse_date, eclipse_time)
     obscuration_data.append(obscuration)
     
-# Adding obscuration totality to csv file
+# adding the new values from algorithm to the empty list
 coordinates['OBSCURATION'] = obscuration_data
 
+# creating a new file with new obscuration data
 coordinates.to_csv('new dataframe', index=False)
-
 print(coordinates)
 
