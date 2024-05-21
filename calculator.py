@@ -1,3 +1,4 @@
+# This file calculates the obscuration percentage for latitude and longitude values in a csv file for any given time throughout the day of the eclipse.
 import ephem
 import openpyxl
 import pandas as pd
@@ -42,7 +43,7 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
     return obscuration * 100  # convert to percentage
     
 # file w/ updated cleaned latitude and longitude values
-coordinates = pd.read_csv(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\clean dataset - 4_8_24 total solar eclipse.csv')
+coordinates = pd.read_csv(r'CSV FILE')
 
 # full solar eclipse date/time
 eclipse_date = "2024-04-08"
