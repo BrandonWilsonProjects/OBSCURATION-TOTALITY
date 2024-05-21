@@ -47,7 +47,7 @@ coordinates = pd.read_csv(r'CSV FILE')
 
 # full solar eclipse date/time
 eclipse_date = "2024-04-08"
-eclipse_time = "4:00:00"
+eclipse_time = "8:00:00"
 
 # creating an empty list, iterating through each latitude and longitude point in the dataframe, calculating obscuration for each row, appending these values to the created list...
 obscuration_data = []
@@ -61,6 +61,6 @@ for index, row in coordinates.iterrows():
 coordinates['OBSCURATION'] = obscuration_data
 
 # creating a new file with new obscuration data
-coordinates.to_excel('new dataframe.xlsx', index=False)
+coordinates.to_excel('new dataframe6.xlsx', index=False)
 print(coordinates)
 
