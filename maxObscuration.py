@@ -1,3 +1,4 @@
+# This file aims to extract all maximum obscuration totality values for a given coordinate point. 
 import ephem
 import openpyxl
 import pandas as pd
@@ -57,7 +58,7 @@ def hourly_timestamps(start_date, start_time, end_time):
     return timestamps
 
 # file w/ updated cleaned latitude and longitude values
-coordinates = pd.read_csv(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\clean dataset - 4_8_24 total solar eclipse.csv')
+coordinates = pd.read_csv(r'CSV FILE')
 
 eclipse_date = "2024-04-08"
 start_time = "00:00:00"
