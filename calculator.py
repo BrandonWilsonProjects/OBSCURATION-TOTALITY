@@ -44,8 +44,8 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
 coordinates = pd.read_csv(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\clean dataset - 4_8_24 total solar eclipse.csv')
 
 # Date of Eclipse
-eclipse_date = "2024-04-09"
-eclipse_time = "23:00:00"
+eclipse_date = "2024-04-24"
+eclipse_time = "12:00:00"
 
 # Calculating obscuration for each datapoint
 obscuration_data = []
