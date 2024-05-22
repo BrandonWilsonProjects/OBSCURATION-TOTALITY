@@ -41,7 +41,7 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
 
     return obscuration * 100  # convert to percentage
 
-coordinates = pd.read_csv(r"CSV FILE")
+coordinates = pd.read_csv(r"C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\clean dataset - 4_8_24 total solar eclipse.csv")
 
 # eclipse date/time for first comparison dataset
 eclipse_date_1 = "2024-04-08"
@@ -57,6 +57,7 @@ for index, row in coordinates.iterrows():
     obscuration_1 = obscuration_algorithm(latitude, longitude, eclipse_date_1, eclipse_time_1)
     obscuration_data_1.append(obscuration_1)
     obscuration_2 = obscuration_algorithm(latitude, longitude, eclipse_date_1, eclipse_time_2)
+    obscuration_data_2.append(obscuration_2)
 
 # seting values to graph in the bar chart (can change if needed...)
 low_obscuration_1 = [95]
