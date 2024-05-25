@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 
 # loading the cleaned latitude and longitude data and convering it to a data frame 
-location_data = pd.read_csv(r"C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\Solar Eclipse Safari_CLEANED (ZIP CODE).csv")
+location_data = pd.read_csv(r"CSV FILE")
 location_data_df = pd.DataFrame(location_data)
 
 # activating nominatim class...

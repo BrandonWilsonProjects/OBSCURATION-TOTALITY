@@ -6,7 +6,7 @@ from geopy.geocoders import Nominatim
 from tqdm import tqdm 
 
 # loading the cleaned latitude and longitude data and convering it to a data frame 
-location_data = pd.read_excel(r"C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\DATAFRAME (SOLAR_ECLIPSE_SAFARI) [ZIPCODE].xlsx")
+location_data = pd.read_csv(r"CSV FILE")
 location_data_df = pd.DataFrame(location_data)
 
 # activating nominatim class...

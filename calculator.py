@@ -43,7 +43,7 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
     return obscuration * 100  # convert to percentage
     
 # file w/ updated cleaned latitude and longitude values
-coordinates = pd.read_excel(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\DATAFRAME (SOLAR_ECLIPSE_SAFARI) [ZIPCODE].xlsx')
+coordinates = pd.read_csv(r'CSV FILE')
 
 # full solar eclipse date/time (can change if needed...)
 eclipse_date = "2024-04-08"
