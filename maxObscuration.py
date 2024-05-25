@@ -58,7 +58,7 @@ def hourly_timestamps(start_date, start_time, end_time):
     return timestamps
 
 # file w/ updated cleaned latitude and longitude values
-coordinates = pd.read_csv(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\Solar Eclipse Safari_CLEANED (LATLONG).csv')
+coordinates = pd.read_excel(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\DATAFRAME (SOLAR_ECLIPSE_SAFARI) [ZIPCODE].xlsx')
 
 eclipse_date = "2024-04-08"
 start_time = "00:00:00"
@@ -89,6 +89,6 @@ for index, row in coordinates.iterrows():
     
 # add to data frame
 coordinates['MAX_OBSCURATION'] = max_obscuration_data
-coordinates.to_excel('new dataframe10.xlsx', index=False)
+coordinates.to_excel('new dataframe101.xlsx', index=False)
 print(coordinates)
 

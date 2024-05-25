@@ -43,7 +43,7 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
     return obscuration * 100  # convert to percentage
     
 # file w/ updated cleaned latitude and longitude values
-coordinates = pd.read_csv(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\Solar Eclipse Safari_CLEANED (LATLONG).csv')
+coordinates = pd.read_excel(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\DATAFRAME (SOLAR_ECLIPSE_SAFARI) [ZIPCODE].xlsx')
 
 # full solar eclipse date/time (can change if needed...)
 eclipse_date = "2024-04-08"
@@ -61,6 +61,6 @@ for index, row in coordinates.iterrows():
 coordinates['OBSCURATION'] = obscuration_data
 
 # creating a new file with new obscuration data
-coordinates.to_excel('new dataframe8.xlsx', index=False)
+coordinates.to_excel('new dataframe21.xlsx', index=False)
 print(coordinates)
 

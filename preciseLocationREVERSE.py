@@ -6,7 +6,7 @@ from geopy.geocoders import Nominatim
 from tqdm import tqdm 
 
 # loading the cleaned latitude and longitude data and convering it to a data frame 
-location_data = pd.read_csv(r"C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\Solar Eclipse Safari_CLEANED (LATLONG).csv")
+location_data = pd.read_excel(r"C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\OBSCURATION-TOTALITY\DATAFRAME (SOLAR_ECLIPSE_SAFARI) [ZIPCODE].xlsx")
 location_data_df = pd.DataFrame(location_data)
 
 # activating nominatim class...
@@ -22,7 +22,7 @@ tqdm.pandas()
 location_data_df['LOCATION'] = location_data_df.progress_apply(retrieving_location, axis=1)
 
 # creating a new csv file with updated location data
-location_data_df.to_excel('new dataframe2.xlsx', index=False)
+location_data_df.to_excel('new dataframe202.xlsx', index=False)
 print(location_data_df)
 
 
