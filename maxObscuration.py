@@ -73,7 +73,7 @@ def hourly_timestamps(start_date, start_time, end_time):
 tf = TimezoneFinder()
 
 # file w/ updated cleaned latitude and longitude values
-coordinates = pd.read_csv(r'CSV FILE')
+coordinates = pd.read_excel(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\Book2.xlsx')
 
 eclipse_date = "2024-04-08"
 start_time = "00:00:00"
@@ -114,6 +114,6 @@ else:
 
 max_obscuration_data = max_obscuration_data[:len(coordinates)]
 coordinates['MAX_OBSCURATION'] = max_obscuration_data
-coordinates.to_excel('new_dataframe1.xlsx', index=False)
+coordinates.to_excel('new_dataframe85.xlsx', index=False)
 print(coordinates)
 
