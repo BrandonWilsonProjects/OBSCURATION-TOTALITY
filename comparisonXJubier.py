@@ -1,3 +1,4 @@
+# This file aims to compare 'Google Maps - Interactive Maps for Solar Eclipses' data with my 'maxObscuration.py' data
 import pandas as pd
 import matplotlib.pyplot as plt
 

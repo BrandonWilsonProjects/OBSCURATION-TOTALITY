@@ -1,3 +1,4 @@
+# This file allows for a comparison of obscuration percentage datasets at different times
 import math
 from skyfield.api import Topos, load
 import openpyxl
