@@ -1,39 +1,51 @@
 # This file aims to extract all maximum obscuration totality values for a given coordinate point. 
-import ephem
+import math
+from skyfield.api import Topos, load
+from datetime import datetime
 import openpyxl
 import pandas as pd
-import math
-from datetime import datetime
-from datetime import timedelta
-from datetime import time
+from datetime import datetime, timedelta, time
+from timezonefinder import TimezoneFinder
+from zoneinfo import ZoneInfo
+from tqdm import tqdm
 
-
-def obscuration_algorithm(latitude, longitude, date, time_str):
-    observer = ephem.Observer()
-    observer.lat = str(latitude)
-    observer.lon = str(longitude)
+# obscuration algorithm - variables pulled from skyfield.api
+def obscuration_algorithm_skyfield(latitude, longitude, dt, altitude=0.0):
+    ts = load.timescale()
+    t = ts.utc(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
     
-    dt = datetime.strptime(f"{date} {time_str}", "%Y-%m-%d %H:%M:%S")
-    observer.date = dt
+    eph = load('de431t.bsp')
+    observer = eph['earth'] + Topos(latitude_degrees=latitude, longitude_degrees=longitude, elevation_m=altitude)
     
-    sun = ephem.Sun(observer)
-    moon = ephem.Moon(observer)
+    sun = eph['sun']
+    moon = eph['moon']
+    
+    astrometric_sun = observer.at(t).observe(sun).apparent()
+    astrometric_moon = observer.at(t).observe(moon).apparent()
+    
+    sun_distance = astrometric_sun.distance().km
+    moon_distance = astrometric_moon.distance().km
 
-    # calculating angular radius for both the sun and the moon
-    sun_angular_radius = sun.size / (2 * 60) * (math.pi / 180)
-    moon_angular_radius = moon.size / (2 * 60) * (math.pi / 180)
+    sun_radius_km = 696340  
+    moon_radius_km = 1737.4  
 
-    # finding the angular distance between the center of the sun and the moon
-    sun_moon_distance = ephem.separation((sun.az, sun.alt), (moon.az, moon.alt))
+    sun_angular_radius = sun_radius_km / sun_distance
+    moon_angular_radius = moon_radius_km / moon_distance
+    sun_moon_distance = astrometric_sun.separation_from(astrometric_moon).radians
 
-    # calculating the obscuration considering potential overlap of both astronomical objects
+    # if there is no obscuration
     if sun_moon_distance >= sun_angular_radius + moon_angular_radius:
         obscuration = 0.0
+    # some obscuration...
     elif sun_moon_distance <= abs(sun_angular_radius - moon_angular_radius):
-        # complete totality
-        obscuration = (moon_angular_radius ** 2 / sun_angular_radius ** 2) if moon_angular_radius < sun_angular_radius else 1.0
+        # accounting for some obscuration
+        if moon_angular_radius < sun_angular_radius:
+            obscuration = (moon_angular_radius ** 2) / (sun_angular_radius ** 2)
+            # 100% obscuration
+        else:
+            obscuration = 1.0
+    # partial obscuration
     else:
-        # partial overlap
         r1, r2, d = sun_angular_radius, moon_angular_radius, sun_moon_distance
         part1 = r1**2 * math.acos((d**2 + r1**2 - r2**2) / (2 * d * r1))
         part2 = r2**2 * math.acos((d**2 + r2**2 - r1**2) / (2 * d * r2))
@@ -47,8 +59,8 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
 def hourly_timestamps(start_date, start_time, end_time):
     start_datetime = datetime.strptime(f"{start_date} {start_time}", "%Y-%m-%d %H:%M:%S")
     end_datetime = datetime.strptime(f"{start_date} {end_time}", "%Y-%m-%d %H:%M:%S")
-    delta = timedelta(hours=1)
-    # created empty timestamps list, iterates by one hour...  
+    delta = timedelta(hours=0.25)
+    # created empty timestamps list, iterates by every minute... this could take a while   
     timestamps = []
     current_time = start_datetime
     while current_time <= end_datetime:
@@ -56,6 +68,9 @@ def hourly_timestamps(start_date, start_time, end_time):
         current_time += delta
     
     return timestamps
+
+# timezone identification 
+tf = TimezoneFinder()
 
 # file w/ updated cleaned latitude and longitude values
 coordinates = pd.read_csv(r'CSV FILE')
@@ -69,26 +84,36 @@ hourly_times = hourly_timestamps(eclipse_date, start_time, end_time)
 # empty list for maximum obscuration found over this iteration
 max_obscuration_data = []
 
-# iterating through each row in dataset
-for index, row in coordinates.iterrows():
+# iterating through each row in dataset w/ progress bar to track iterated calculations...
+for index, row in tqdm(coordinates.iterrows(), total=coordinates.shape[0], desc = 'Processing coordinates'):
     latitude = row['LATITUDE']
     longitude = row['LONGITUDE']
     
-    # initializing maximum obscuration
-    max_obscuration = 0.0
+    timezone_name = tf.timezone_at(lat=latitude, lng=longitude)
+    
+    if timezone_name:
+        timezone = ZoneInfo(timezone_name)
+        max_obscuration = 0.0
+       
     
     # iterating through each time string in 'hourly stamps' function to calculate obscuration 
     for time_str in hourly_times:
-        obscuration = obscuration_algorithm(latitude, longitude, eclipse_date, time_str)
+            naive_dt = datetime.strptime(f"{eclipse_date} {time_str}", "%Y-%m-%d %H:%M:%S")
+            local_dt = naive_dt.replace(tzinfo=timezone)
+            obscuration = obscuration_algorithm_skyfield(latitude, longitude, local_dt)
         # if the obscuration is largest in evaluated row, set equal to max obscuration
-        if obscuration > max_obscuration:
-            max_obscuration = obscuration
-    
-    # to the empty list, append every max obscuration retrieved 
-    max_obscuration_data.append(max_obscuration)
-    
-# add to data frame
+            if obscuration > max_obscuration:
+               max_obscuration = obscuration
+
+    if max_obscuration == 0.0:
+        max_obscuration_data.append(0.0) # accounting for 0% obscuration
+    else:
+        max_obscuration_data.append(max_obscuration)
+else:
+    max_obscuration_data.append(None)
+
+max_obscuration_data = max_obscuration_data[:len(coordinates)]
 coordinates['MAX_OBSCURATION'] = max_obscuration_data
-coordinates.to_excel('new dataframe101.xlsx', index=False)
+coordinates.to_excel('new_dataframe1.xlsx', index=False)
 print(coordinates)
 

@@ -6,7 +6,7 @@ from geopy.geocoders import Nominatim
 from tqdm import tqdm 
 
 # loading the cleaned latitude and longitude data and convering it to a data frame 
-location_data = pd.read_csv(r"CSV FILE")
+location_data = pd.read_csv(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\Solar Eclipse Safari_CLEANED (LATLONG).csv')
 location_data_df = pd.DataFrame(location_data)
 
 # activating nominatim class...
@@ -15,7 +15,11 @@ geolocator = Nominatim(user_agent="reverse_geocoding")
 # function for retrieving location data for each latitude and longitude row in the data frame
 def retrieving_location(row):
     location = geolocator.reverse((row['LATITUDE'], row['LONGITUDE']), language='en')
-    return location.__getstate__
+    if location:
+        address = location.raw['address']
+        if address.get('country_code') in ['ca', 'us']:
+            return location.__getstate__
+    return None
 
 # adding progress bars to the iteration 
 tqdm.pandas()

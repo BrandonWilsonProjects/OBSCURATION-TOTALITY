@@ -1,37 +1,50 @@
-# This file allows for two obscuration totality datasets, calculated at two different times of the day, to be compared.
-import ephem
-import pandas as pd
 import math
-from datetime import datetime
-from datetime import time
+from skyfield.api import Topos, load
+import openpyxl
+import pandas as pd
+from datetime import datetime, timedelta, time
+from timezonefinder import TimezoneFinder
+from zoneinfo import ZoneInfo
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 
-def obscuration_algorithm(latitude, longitude, date, time_str):
-    observer = ephem.Observer()
-    observer.lat = str(latitude)
-    observer.lon = str(longitude)
+# obscuration algorithm - variables pulled from skyfield.api
+def obscuration_algorithm_skyfield(latitude, longitude, dt, altitude=0.0):
+    ts = load.timescale()
+    t = ts.utc(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
     
-    dt = datetime.strptime(f"{date} {time_str}", "%Y-%m-%d %H:%M:%S")
-    observer.date = dt
+    eph = load('de431t.bsp')
+    observer = eph['earth'] + Topos(latitude_degrees=latitude, longitude_degrees=longitude, elevation_m=altitude)
     
-    sun = ephem.Sun(observer)
-    moon = ephem.Moon(observer)
+    sun = eph['sun']
+    moon = eph['moon']
+    
+    astrometric_sun = observer.at(t).observe(sun).apparent()
+    astrometric_moon = observer.at(t).observe(moon).apparent()
+    
+    sun_distance = astrometric_sun.distance().km
+    moon_distance = astrometric_moon.distance().km
 
-    # calculating angular radius for both the sun and the moon
-    sun_angular_radius = sun.size / (2 * 60) * (math.pi / 180)
-    moon_angular_radius = moon.size / (2 * 60) * (math.pi / 180)
+    sun_radius_km = 696340  
+    moon_radius_km = 1737.4  
 
-    # finding the angular distance between the center of the sun and the moon
-    sun_moon_distance = ephem.separation((sun.az, sun.alt), (moon.az, moon.alt))
+    sun_angular_radius = sun_radius_km / sun_distance
+    moon_angular_radius = moon_radius_km / moon_distance
+    sun_moon_distance = astrometric_sun.separation_from(astrometric_moon).radians
 
-    # calculating the obscuration considering potential overlap of both astronomical objects
+    # if there is no obscuration
     if sun_moon_distance >= sun_angular_radius + moon_angular_radius:
         obscuration = 0.0
+    # some obscuration...
     elif sun_moon_distance <= abs(sun_angular_radius - moon_angular_radius):
-        # complete totality
-        obscuration = (moon_angular_radius ** 2 / sun_angular_radius ** 2) if moon_angular_radius < sun_angular_radius else 1.0
+        # accounting for some obscuration
+        if moon_angular_radius < sun_angular_radius:
+            obscuration = (moon_angular_radius ** 2) / (sun_angular_radius ** 2)
+            # 100% obscuration
+        else:
+            obscuration = 1.0
+    # partial obscuration
     else:
-        # partial overlap
         r1, r2, d = sun_angular_radius, moon_angular_radius, sun_moon_distance
         part1 = r1**2 * math.acos((d**2 + r1**2 - r2**2) / (2 * d * r1))
         part2 = r2**2 * math.acos((d**2 + r2**2 - r1**2) / (2 * d * r2))
@@ -41,7 +54,11 @@ def obscuration_algorithm(latitude, longitude, date, time_str):
 
     return obscuration * 100  # convert to percentage
 
-coordinates = pd.read_csv(r"CSV FILE")
+# timezone identification
+tf = TimezoneFinder()
+
+# file w/ updated cleaned latitude and longitude values
+coordinates = pd.read_csv(r'CSV FILE')
 
 # eclipse date/time for first comparison dataset
 eclipse_date_1 = "2024-04-08"
@@ -54,9 +71,16 @@ obscuration_data_2 = []
 for index, row in coordinates.iterrows():
     latitude = row['LATITUDE']
     longitude = row['LONGITUDE']
-    obscuration_1 = obscuration_algorithm(latitude, longitude, eclipse_date_1, eclipse_time_1)
+    timezone_name = tf.timezone_at(lat=latitude, lng=longitude)
+    if timezone_name:
+        timezone = ZoneInfo(timezone_name)
+        naive_dt_1 = datetime.strptime(f"{eclipse_date_1} {eclipse_time_1}", "%Y-%m-%d %H:%M:%S")
+        naive_dt_2 = datetime.strptime(f"{eclipse_date_1} {eclipse_time_2}", "%Y-%m-%d %H:%M:%S")
+        local_dt_1 = naive_dt_1.replace(tzinfo=timezone)
+        local_dt_2 = naive_dt_2.replace(tzinfo=timezone)
+    obscuration_1 = obscuration_algorithm_skyfield(latitude, longitude, local_dt_1)
     obscuration_data_1.append(obscuration_1)
-    obscuration_2 = obscuration_algorithm(latitude, longitude, eclipse_date_1, eclipse_time_2)
+    obscuration_2 = obscuration_algorithm_skyfield(latitude, longitude, local_dt_2)
     obscuration_data_2.append(obscuration_2)
 
 # seting values to graph in the bar chart (can change if needed...)

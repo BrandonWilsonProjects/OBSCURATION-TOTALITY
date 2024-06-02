@@ -17,7 +17,9 @@ geolocator = Nominatim(user_agent="geocoding")
 def retrieving_location(row):
     location = geolocator.geocode((row['ZIPCODE']), language='en')
     if location:
-        return location.longitude
+        address = location.raw['address']
+        if address.get('country_code') in ['ca', 'us']:
+            return location.longitude
     else:
         return (None, None)
 
