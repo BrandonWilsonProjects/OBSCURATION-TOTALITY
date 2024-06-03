@@ -73,7 +73,7 @@ def hourly_timestamps(start_date, start_time, end_time):
 tf = TimezoneFinder()
 
 # file w/ updated cleaned latitude and longitude values
-coordinates = pd.read_excel(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\DataObscuration [XJubier].xlsx')
+coordinates = pd.read_excel(r'EXCEL FILE')
 
 eclipse_date = "2024-04-08"
 start_time = "00:00:00"

@@ -59,7 +59,7 @@ def obscuration_algorithm_skyfield(latitude, longitude, dt, altitude=0.0):
 tf = TimezoneFinder()
     
 # file w/ updated cleaned latitude and longitude values
-coordinates = pd.read_csv(r'CSV FILE')
+coordinates = pd.read_excel(r'EXCEL FILE')
 
 # full solar eclipse date/time (can change if needed...)
 eclipse_date = "2024-04-08"

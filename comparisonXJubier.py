@@ -3,8 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Read the Excel files
-coordinates_data = pd.read_excel(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\DataObscuration [XJubier].xlsx')
-xjubier_data = pd.read_excel(r'C:\Users\bzwil\OneDrive\Desktop\OBSCURATION ALGORITHM\WebScrapedData [XJubier].xlsx')
+coordinates_data = pd.read_excel(r'EXCEL FILE [DATA - SHOWS POTENTIAL VARIANCE]')
+xjubier_data = pd.read_excel(r'EXCEL FILE [ACCURATE DATA]')
 
 # Plotting the obscuration data
 plt.figure(figsize=(10, 6))

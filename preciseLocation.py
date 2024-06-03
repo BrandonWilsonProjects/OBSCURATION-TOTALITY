@@ -1,4 +1,4 @@
-# This file identifies the proximal location of coordinate points in a csv file.
+# This file identifies the proximal location of coordinate points in a excel file.
 import pandas as pd
 import openpyxl
 import geopy as gp
@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 
 # loading the cleaned latitude and longitude data and convering it to a data frame 
-location_data = pd.read_csv(r"CSV FILE")
+location_data = pd.read_excel(r"EXCEL FILE")
 location_data_df = pd.DataFrame(location_data)
 
 # activating nominatim class...
