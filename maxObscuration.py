@@ -59,7 +59,7 @@ def obscuration_algorithm_skyfield(latitude, longitude, dt, altitude=0.0):
 def hourly_timestamps(start_date, start_time, end_time):
     start_datetime = datetime.strptime(f"{start_date} {start_time}", "%Y-%m-%d %H:%M:%S")
     end_datetime = datetime.strptime(f"{start_date} {end_time}", "%Y-%m-%d %H:%M:%S")
-    delta = timedelta(hours=0.25)
+    delta = timedelta(minutes=1)
     # created empty timestamps list, iterates by every minute... this could take a while   
     timestamps = []
     current_time = start_datetime
@@ -76,24 +76,26 @@ tf = TimezoneFinder()
 coordinates = pd.read_excel(r'EXCEL FILE')
 
 eclipse_date = "2024-04-08"
-start_time = "00:00:00"
-end_time = "23:59:59"
+start_time = "17:00:00"
+end_time = "21:00:00"
 
 hourly_times = hourly_timestamps(eclipse_date, start_time, end_time)
 
 # empty list for maximum obscuration found over this iteration
 max_obscuration_data = []
+max_obscuration_ten_minutes_before_data = []
 
 # iterating through each row in dataset w/ progress bar to track iterated calculations...
 for index, row in tqdm(coordinates.iterrows(), total=coordinates.shape[0], desc = 'Processing coordinates'):
-    latitude = row['LATITUDE']
-    longitude = row['LONGITUDE']
+    latitude = row['LATITUDE (ASSISTED)']
+    longitude = row['LONGITUDE (ASSISTED)']
     
     timezone_name = tf.timezone_at(lat=latitude, lng=longitude)
     
     if timezone_name:
         timezone = ZoneInfo(timezone_name)
         max_obscuration = 0.0
+        max_obscuration_time = None
        
     
     # iterating through each time string in 'hourly stamps' function to calculate obscuration 
@@ -104,16 +106,24 @@ for index, row in tqdm(coordinates.iterrows(), total=coordinates.shape[0], desc 
         # if the obscuration is largest in evaluated row, set equal to max obscuration
             if obscuration > max_obscuration:
                max_obscuration = obscuration
-
-    if max_obscuration == 0.0:
-        max_obscuration_data.append(0.0) # accounting for 0% obscuration
+               max_obscuration_time = local_dt
+               
+    max_obscuration_data.append(max_obscuration)
+    
+    if max_obscuration_time:
+        ten_minutes_before_max_time = max_obscuration_time - timedelta(minutes=10)
+        ten_minutes_before_obscuration = obscuration_algorithm_skyfield(latitude, longitude, ten_minutes_before_max_time)
+        max_obscuration_ten_minutes_before_data.append(ten_minutes_before_obscuration)
     else:
-        max_obscuration_data.append(max_obscuration)
+        max_obscuration_ten_minutes_before_data.append(0.0)
 else:
     max_obscuration_data.append(None)
+    max_obscuration_ten_minutes_before_data.append(None)
 
 max_obscuration_data = max_obscuration_data[:len(coordinates)]
+max_obscuration_ten_minutes_before_data = max_obscuration_ten_minutes_before_data[:len(coordinates)]
 coordinates['MAX_OBSCURATION'] = max_obscuration_data
-coordinates.to_excel('new_dataframe82.xlsx', index=False)
+coordinates['OBSCURATION 10 MINUTES BEFORE MAXIMUM'] = max_obscuration_ten_minutes_before_data
+coordinates.to_excel('new_dataframe232.xlsx', index=False)
 print(coordinates)
 

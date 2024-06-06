@@ -63,7 +63,7 @@ coordinates = pd.read_excel(r'EXCEL FILE')
 
 # full solar eclipse date/time (can change if needed...)
 eclipse_date = "2024-04-08"
-eclipse_time = "20:00:00"
+eclipse_time = "18:00:00"
 
 # creating an empty list, iterating through each latitude and longitude point in the dataframe, calculating obscuration for each row, appending these values to the created list...
 obscuration_data = []
